@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block navbar %} Hai. I'll add the navbar shortly. {% endblock %}
+
+{% block form %}
+<section style="margin-left:75px">
+
+    <h3>Note : CSV file should have the fields in the format given below:</h3>
+    <ul>
+        regno, name, branch, cursem, join, section, status, parent, admtype, gender, admissionno, permanentaddress,
+        temporaryaddress, dateofbirth, category, emailid, personwithdisabilities, catrank, religion, bloodgroup,
+        parentorguardianname, parentorguardianoccupation, parentorguardiancontactno, parentorguardianemailid,
+        miniproject, miniprojectguide, mainproject, mainprojectguide, behaviour, studentcontactno, studentemailid,
+        tenboard, tenregisterno, tenmarks, tenpercentage, tenyear, qualifyingboard, qualifyingregisterno,
+        qualifyingmarks, qualifyingpercentage,qualifyingyear,specialreservation
+    </ul>
+    <h3> Status field must given the exact value as given below:</h3>
+    <ul>
+        The status field should have the value 'Active' for Currently Studying students and 'Pass out' for those who
+        have completed the course and 'Drop out' for those who have discontinued their studies.
+    </ul>
+
+    <h3>Optional fields</h3>
+    <ul>
+        parentorguardianemailid,personwithdisabilities,miniproject,miniprojectguide,mainproject,
+        mainprojectguide,specialreservation.
+    </ul>
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input type="file" name="csv_file" id="csv_file" required="True" class="form-control">
+        <button type="submit">Submit</button>
+
+    </form>
+
+</section>
+{% endblock %}
+

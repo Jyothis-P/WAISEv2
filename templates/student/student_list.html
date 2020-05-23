@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block navbar %} Hai. I'll add the navbar shortly. {% endblock %}
+
+{% block form %}
+<section>
+    <div style="text-align: center;margin-left: 50px; " class="4u 12u$(medium)">
+        <form method="get">
+
+            <table style="width:700px;">
+                <tr>
+                    <th style="text-align:center;">
+
+                        <label style="font-size: medium;font-family:Arial">{{ filter.form.cursem.label }}</label>
+                    </th>
+
+                    <th style="text-align:center;">
+                        <label style="font-size: medium;font-family:Arial">{{ filter.form.join.label }}</label>
+                    </th>
+
+                    <th style="text-align:center;">
+                        <label style="font-size: medium;font-family:Arial">{{ filter.form.regno.label }}</label>
+                    </th>
+
+
+                </tr>
+                <tr>
+                    <td>
+                        {{ filter.form.cursem }}
+                    </td>
+
+                    <td>
+                        {{ filter.form.join }}
+                    </td>
+
+                    <td>
+                        {{ filter.form.regno }}
+                    </td>
+
+                </tr>
+
+            </table>
+
+            <button type="submit" name="submit" style="margin-left:300px;">Search</button>
+        </form>
+    </div>
+    </form>
+
+
+    {% if request.GET %}
+    <ul>
+        <table id="tables" class="table table-striped table-bordered dt-responsive dataTables_wrapper"
+               cellspacing="0">
+
+            <tr>
+                <th>
+                    <label style="font-size: medium;font-family:Arial">Register Number</label>
+                </th>
+
+                <th>
+                    <label style="font-size: medium;font-family:Arial">Student Name </label>
+                </th>
+
+                <th>
+                    <label style="font-size: medium;font-family:Arial">Branch</label>
+                </th>
+
+                <th>
+                    <label style="font-size: medium;font-family:Arial">Semester</label>
+                </th>
+
+                <th>
+                    <label style="font-size: medium;font-family:Arial">Joining Year</label>
+                </th>
+
+                <th>
+                    <label style="font-size: medium;font-family:Arial"></label>
+                </th>
+            </tr>
+
+
+            {% for student in filter.qs %}
+            <tr>
+                <td>
+                    <label style="font-size: medium;font-family:Arial"><a
+                            href="#">{{ student.regno }}</a>
+                        <!--                        TODO Add link to details.-->
+
+                    </label>
+                </td>
+
+                <td>
+                    <label style="font-size: medium;font-family:Arial">{{ student.name }} </label>
+                </td>
+
+
+                <td>
+                    <label style="font-size: medium;font-family:Arial">{{ student.branch }} </label>
+                </td>
+                <td>
+                    <label style="font-size: medium;font-family:Arial">{{ student.cursem }} </label>
+                </td>
+                <td>
+                    <label style="font-size: medium;font-family:Arial">{{ student.join }} </label>
+                </td>
+                <td>
+                    <label style="font-size: medium;font-family:Arial"><a
+                            href="{% url 'student:delete' student.regno %}?next={{ request.get_full_path|urlencode }}">Delete</a>
+                    </label>
+                </td>
+            </tr>
+
+            {% empty %}
+            <p style="font-weight: bold">Sorry no data found with the given filter </p>
+            {% endfor %}
+        </table>
+    </ul>
+    {% endif %}
+
+</section>
+{% endblock %}
