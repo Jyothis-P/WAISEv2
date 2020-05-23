@@ -43,3 +43,25 @@ class StudentCsvForm(forms.ModelForm):
         model = Student
         fields = '__all__'
         exclude = ('photo',)
+
+
+class StudentUpdateForm(forms.ModelForm):
+    regno = forms.IntegerField(disabled=True, widget=forms.TextInput(attrs={'size': 2}))
+    permanentaddress = forms.CharField(widget=forms.Textarea())
+    temporaryaddress = forms.CharField(widget=forms.Textarea())
+
+    class Meta:
+        model = Student
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(StudentUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['permanentaddress'].widget.attrs['style'] = 'width:400px;height:180px'
+        self.fields['temporaryaddress'].widget.attrs['style'] = 'width:400px;height:180px'
+        self.fields['status'].widget.attrs['style'] = 'width:180px;'
+        self.fields['branch'].widget.attrs['style'] = 'width:320px;'
+        self.fields['regno'].label = 'Register Number'
+        self.fields['name'].label = 'Student Name'
+        self.fields['cursem'].label = 'Semester'
+        self.fields['join'].label = 'Year of Join'
+        self.fields['admtype'].label = 'Admission Type'

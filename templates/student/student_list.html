@@ -85,9 +85,7 @@
             <tr>
                 <td>
                     <label style="font-size: medium;font-family:Arial"><a
-                            href="#">{{ student.regno }}</a>
-                        <!--                        TODO Add link to details.-->
-
+                            href="{% url 'student:update' student.regno %}">{{ student.regno }}</a>
                     </label>
                 </td>
 

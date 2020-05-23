@@ -1,12 +1,12 @@
 import csv
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DeleteView
 
 from student.filters import StudentFilter
-from student.forms import StudentModelForm, StudentCsvForm
+from student.forms import StudentModelForm, StudentCsvForm, StudentUpdateForm
 from student.models import Student
 
 
@@ -83,15 +83,24 @@ def student_search(request):
         return render(request, 'student/student_list.html', {'filter': student_filter, 'title': 'Student Search'})
 
 
-# def student_delete(request, pk):
-#     if request.method == 'GET':
-#         student = Student.objects.get(pk=pk)
+def student_update(request, pk):
+    instance = get_object_or_404(Student, regno=pk)
+    student = StudentUpdateForm(request.POST or None, request.FILES or None, instance=instance)
+    if student.is_valid():
+        instance = student.save(commit=False)
+        instance.save()
+
+        return redirect('student:search')
+    context = {
+        "form": student,
+        "title": 'Edit Student',
+    }
+
+    return render(request, 'student/student_form.html', context)
 
 
 class StudentDelete(DeleteView):
     model = Student
-
-    # success_url = reverse_lazy('student:search')
 
     def get_success_url(self):
         url = self.request.GET['next']

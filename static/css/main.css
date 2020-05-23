@@ -2346,6 +2346,19 @@
 		width: 250px;
 	}
 
+	input[type="text"]:disabled,
+	input[type="number"]:disabled,
+	input[type="date"]:disabled,
+	input[type="password"]:disabled,
+	input[type="email"]:disabled,
+	input[type="tel"]:disabled,
+	input[type="search"]:disabled,
+	input[type="url"]:disabled,
+	select:disabled,
+	textarea:disabled{
+		background: #e4e4e4;
+	}
+
 		input[type="text"]:invalid,
 		input[type="number"]:invalid,
 		input[type="date"]:invalid,
