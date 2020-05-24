@@ -61,6 +61,8 @@ class StudentUpdateForm(forms.ModelForm):
         self.fields['status'].widget.attrs['style'] = 'width:180px;'
         self.fields['branch'].widget.attrs['style'] = 'width:320px;'
         self.fields['regno'].label = 'Register Number'
+        self.fields['permanentaddress'].label = 'Permanent Address'
+        self.fields['temporaryaddress'].label = 'Temporary Address'
         self.fields['name'].label = 'Student Name'
         self.fields['cursem'].label = 'Semester'
         self.fields['join'].label = 'Year of Join'

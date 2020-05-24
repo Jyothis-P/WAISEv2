@@ -3,6 +3,8 @@ import datetime
 from django.db import models
 from django.urls import reverse
 
+from faculty.models import Faculty
+
 DEPARTMENTS = (('CS', 'Computer Science And Engineering'), ('IT', 'Information Technology'),
                ('EEE', 'Electrical & Electronics Engineering'), ('EC', 'Electronics & Communication'),
                ('SFE', 'Safety & Fire Engineering'), ('CE', 'Civil Engineering'),
@@ -11,6 +13,14 @@ DEPARTMENTS = (('CS', 'Computer Science And Engineering'), ('IT', 'Information T
 SEMESTERS = (('1', 'S1'), ('2', 'S2'), ('3', 'S3'), ('4', 'S4'), ('5', 'S5'), ('6', 'S6'), ('7', 'S7'),
              ('8', 'S8'))
 
+SECTION = (('A', 'A'), ('B', 'B'))
+
+GENDER = (('M', 'Male'), ('F', 'Female'))
+
+SUB_TYPES = (('T', 'Theory'), ('L', 'Practical'), ('P', 'Project'))
+
+EXAMS = (('Internal', 'Internal'), ('External', 'External'))
+
 
 def student_photo_location(instance, filename):
     extension = filename.split('.')[-1]
@@ -18,16 +28,12 @@ def student_photo_location(instance, filename):
 
 
 class Student(models.Model):
-    SECTION = (('A', 'A'), ('B', 'B'))
-
     STATUS = (('Active', 'Currently Studying'), ('Pass out', 'Course Completed'),
               ('Drop out', 'Drop out '))
 
     BLOODGROUPS = (('A+ve', 'A+ve'), ('A-ve', 'A-ve'), ('B+ve', 'B+ve'),
                    ('B-ve', 'B-ve'), ('AB+ve', 'AB+ve'), ('AB-ve', 'AB-ve'),
                    ('O+ve', 'O+ve'), ('O-ve', 'O-ve'),)
-
-    GENDER = (('M', 'Male'), ('F', 'Female'))
 
     limit = datetime.datetime.today().year + 1
     YEARS = tuple([(x, x) for x in range(2015, 2025)])
@@ -41,7 +47,7 @@ class Student(models.Model):
     gender = models.CharField(max_length=6, choices=GENDER, default='M')
     studentcontactno = models.CharField(max_length=15, verbose_name='Students Contact No', null=True, blank=True)
     emailid = models.CharField(max_length=80, verbose_name=u'Email Id', null=True, blank=True)
-    dateofbirth = models.DateField(default='2000-01-01')
+    dateofbirth = models.DateField(verbose_name='Date of birth', default='2000-01-01')
     permanentaddress = models.CharField(max_length=150, verbose_name='Permanent Address', null=True, blank=True)
     temporaryaddress = models.CharField(max_length=150, verbose_name='Temporary Address', null=True, blank=True)
     category = models.CharField(max_length=20, default='General')
@@ -99,7 +105,74 @@ class Student(models.Model):
         return reverse('student:index', kwargs={'pk': self.pk})
 
     def __str__(self):
-        return str(self.regno)
+        return str(self.regno) + ': ' + str(self.name)
 
     class Meta:
         ordering = ('regno',)  # 'ordering' must be a tuple or list (even if you want to order by only one field).
+
+
+class Syllabus(models.Model):
+    YEARS = []
+    limit = datetime.datetime.today().year + 10
+    for x in range(2010, limit):
+        YEARS.append((x, x))
+
+    year = models.PositiveIntegerField(choices=YEARS)
+    dept = models.CharField(max_length=60, choices=DEPARTMENTS, verbose_name='Department')
+
+    def __str__(self):
+        return str(self.year)
+
+    class Meta:
+        ordering = ('year',)
+
+
+class Subject(models.Model):
+    syllabus = models.ForeignKey(Syllabus, on_delete=models.CASCADE, default='1')
+    code = models.CharField(primary_key=True, max_length=15)
+    name = models.CharField(max_length=70)
+    branch = models.CharField(max_length=70, choices=DEPARTMENTS)
+    sem = models.CharField(max_length=2, choices=SEMESTERS)
+    type = models.CharField(max_length=15, choices=SUB_TYPES)
+
+    def __str__(self):
+        return self.code
+
+    class Meta:
+        ordering = ('code',)
+
+
+class MarkList(models.Model):
+    CHANCES = (('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'))
+
+    YEARS = []
+    limit = datetime.datetime.today().year + 10
+    for x in range(2015, limit):
+        YEARS.append((x, x))
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    branch = models.CharField(max_length=70, choices=DEPARTMENTS)
+    sem = models.CharField(max_length=2, choices=SEMESTERS)
+    section = models.CharField(max_length=1, choices=SECTION)
+    type = models.CharField(max_length=9, choices=EXAMS, default='Internal')
+    batch_join_year = models.IntegerField(choices=YEARS, default='0')
+    chance = models.IntegerField(default='0', choices=CHANCES)
+
+    def __str__(self):
+        return str(self.student) + ' S' + str(self.sem)
+
+    class Meta:
+        ordering = ('student',)
+
+
+class SubjectMarks(models.Model):
+    mark_list = models.ForeignKey(MarkList, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    marks = models.SmallIntegerField(default='0')
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.marks)
+
+    class Meta:
+        ordering = ('mark_list',)
