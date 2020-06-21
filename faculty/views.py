@@ -9,11 +9,15 @@ def index(request):
 
 
 def faculty_create(request):
-    student = FacultyModelForm(request.POST or None)
+    faculty = FacultyModelForm(request.POST or None)
+
+    if faculty.is_valid():
+        faculty.save()
+        
 
     context = {
-        "form": student,
-        "title": 'Add Student',
+        "form": faculty,
+        "title": 'Add Faculty',
     }
 
     return render(request, 'faculty/faculty_form.html', context)
