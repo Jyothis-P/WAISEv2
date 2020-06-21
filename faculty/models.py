@@ -1,17 +1,17 @@
 from django.db import models
 import datetime
 
+DEPARTMENTS = (('CS', 'Computer Science And Engineering'), ('IT', 'Information Technology'),
+               ('EEE', 'Electrical & Electronics Engineering'), ('EC', 'Electronics & Communication'),
+               ('SFE', 'Safety & Fire Engineering'), ('CE', 'Civil Engineering'),
+               ('ME', 'Mechanical Engineering'))
 
+
+
+SEMESTERS = (('1', 'S1'), ('2', 'S2'), ('3', 'S3'), ('4', 'S4'), ('5', 'S5'), ('6', 'S6'), ('7', 'S7'),
+             ('8', 'S8'))
+   
 class Syllabus(models.Model):
-    DEPT = (
-        ("CS", "Computer Science And Engineering"),
-        ("IT", "Information Technology"),
-        ("EEE", "Electrical & Electronics Engineering"),
-        ("EC", "Electronics & Communication Engineering"),
-        ("SFE", "Safety & Fire Engineering"),
-        ("CE", "Civil Engineering"),
-        ("ME", "Mechanical Engineering"),
-    )
 
     YEARS = []
     limit = datetime.datetime.today().year + 10
@@ -19,7 +19,7 @@ class Syllabus(models.Model):
         YEARS.append((x, x))
 
     year = models.PositiveIntegerField(choices=YEARS)
-    dept = models.CharField(max_length=60, choices=DEPT, verbose_name="Department")
+    dept = models.CharField(max_length=60, choices=DEPARTMENTS, verbose_name="Department")
 
     theory_max_internal = models.PositiveIntegerField()
     theory_max_external = models.PositiveIntegerField()
@@ -29,52 +29,20 @@ class Syllabus(models.Model):
 
 
 class Subject_Profile(models.Model):
+
     SUB_TYPES = (("T", "Theory"), ("L", "Practical"), ("P", "Project"))
 
-    BRANCHES = (
-        ("CS", "Computer Science And Engineering"),
-        ("IT", "Information Technology"),
-        ("EEE", "Electrical & Electronics Engineering"),
-        ("EC", "Electronics & Communication"),
-        ("SFE", "Safety & Fire Engineering"),
-        ("CE", "Civil Engineering"),
-        ("ME", "Mechanical Engineering"),
-    )
-
-    SEMESTERS = (
-        ("1", "S1"),
-        ("2", "S2"),
-        ("3", "S3"),
-        ("4", "S4"),
-        ("5", "S5"),
-        ("6", "S6"),
-        ("7", "S7"),
-        ("8", "S8"),
-    )
 
     syllabussubid = models.ForeignKey(Syllabus, on_delete=models.CASCADE, default="1")
     code = models.CharField(primary_key=True, max_length=15)
     name = models.CharField(max_length=70)
-    branch = models.CharField(max_length=70, choices=BRANCHES)
+    branch = models.CharField(max_length=70, choices=DEPARTMENTS)
     sem = models.CharField(max_length=2, choices=SEMESTERS)
     stype = models.CharField(max_length=15, choices=SUB_TYPES)
     credit = models.IntegerField(default=3)
 
-
-def upload_location2(instance, filename):
-    return "faculty/%s/%s" % (instance.empid, filename)
-
-
 class Faculty(models.Model):
-    DEPT = (
-        ("CS", "Computer Science And Engineering"),
-        ("IT", "Information Technology"),
-        ("EEE", "Electrical & Electronics Engineering"),
-        ("EC", "Electronics & Communication"),
-        ("SFE", "Safety & Fire Engineering"),
-        ("CE", "Civil Engineering"),
-        ("ME", "Mechanical Engineering"),
-    )
+
 
     DESIG = (
         ("Associate Professor", "Associate Professor"),
@@ -85,10 +53,10 @@ class Faculty(models.Model):
 
     CATEGORY = (("Permanent", "Permanent"), ("Temporary", "Temporary"))
 
-    photo = models.FileField(upload_to=upload_location2, null=True, blank=True)
+    
     empid = models.IntegerField(primary_key=True)
     ename = models.CharField(max_length=30)
-    dept = models.CharField(max_length=70, choices=DEPT, verbose_name="Department")
+    dept = models.CharField(max_length=70, choices=DEPARTMENTS, verbose_name="Department")
     dob = models.DateField(help_text="dd-mm-yyyy")
     desig = models.CharField(
         max_length=20, choices=DESIG, default="Prof", verbose_name="Designation"
@@ -104,26 +72,7 @@ class Faculty(models.Model):
 
 
 class FacultySubject(models.Model):
-    DEPT = (
-        ("CS", "Computer Science And Engineering"),
-        ("IT", "Information Technology"),
-        ("EEE", "Electrical & Electronics Engineering"),
-        ("EC", "Electronics & Communication Engineering"),
-        ("SFE", "Safety & Fire Engineering"),
-        ("CE", "Civil Engineering"),
-        ("ME", "Mechanical Engineering"),
-    )
-
-    SEMESTERS = (
-        ("1", "S1"),
-        ("2", "S2"),
-        ("3", "S3"),
-        ("4", "S4"),
-        ("5", "S5"),
-        ("6", "S6"),
-        ("7", "S7"),
-        ("8", "S8"),
-    )
+ 
 
     YEARS = []
     limit = datetime.datetime.today().year + 10
@@ -140,7 +89,7 @@ class FacultySubject(models.Model):
         max_length=2, choices=SEMESTERS, default="0", verbose_name="Semester"
     )
     branch = models.CharField(
-        max_length=50, choices=DEPT, default="A", verbose_name="Branch"
+        max_length=50, choices=DEPARTMENTS, default="A", verbose_name="Branch"
     )
     section = models.CharField(
         max_length=1, choices=SECTION, default="A", verbose_name="Section"
